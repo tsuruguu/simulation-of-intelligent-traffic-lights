@@ -21,7 +21,7 @@ public class SafetyGuardedStrategy implements TrafficStrategy {
     private static final Logger LOGGER = Logger.getLogger(SafetyGuardedStrategy.class.getName());
 
     // Próg krytyczny w krokach symulacji (np. 300 sekund/kroków)
-    private static final int CRITICAL_WAIT_THRESHOLD = 40;
+    private static final int CRITICAL_WAIT_THRESHOLD = 12;
 
     private final TrafficStrategy primaryAI;
     private final HeuristicStrategy safetyHeuristic;

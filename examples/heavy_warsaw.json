@@ -1,0 +1,47 @@
+{
+  "commands": [
+    { "type": "addVehicle", "vehicleId": "V1", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "EMERGENCY_1", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "V2", "startRoad": "SOUTH", "endRoad": "NORTH" },
+    { "type": "addVehicle", "vehicleId": "V3", "startRoad": "SOUTH", "endRoad": "NORTH" },
+    { "type": "addVehicle", "vehicleId": "BUS_100", "startRoad": "EAST", "endRoad": "WEST" },
+    { "type": "step" },
+
+    { "type": "addVehicle", "vehicleId": "N_LEFT_1", "startRoad": "NORTH", "endRoad": "WEST" },
+    { "type": "addVehicle", "vehicleId": "N_LEFT_2", "startRoad": "NORTH", "endRoad": "WEST" },
+    { "type": "addVehicle", "vehicleId": "S_STRAIGHT_1", "startRoad": "SOUTH", "endRoad": "NORTH" },
+    { "type": "addVehicle", "vehicleId": "S_STRAIGHT_2", "startRoad": "SOUTH", "endRoad": "NORTH" },
+    { "type": "step" },
+
+    { "type": "addVehicle", "vehicleId": "V_CONT_1", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "V_CONT_2", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "V_CONT_3", "startRoad": "SOUTH", "endRoad": "NORTH" },
+    { "type": "addVehicle", "vehicleId": "W_SIDE_1", "startRoad": "WEST", "endRoad": "EAST" },
+    { "type": "step" },
+
+    { "type": "addVehicle", "vehicleId": "V_JAM_1", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "V_JAM_2", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "V_JAM_3", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "V_JAM_4", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "step" },
+    { "type": "step" },
+
+    { "type": "addVehicle", "vehicleId": "E_BUS_GANG", "startRoad": "EAST", "endRoad": "WEST" },
+    { "type": "addVehicle", "vehicleId": "E_LEFT_1", "startRoad": "EAST", "endRoad": "NORTH" },
+    { "type": "addVehicle", "vehicleId": "W_STRAIGHT_1", "startRoad": "WEST", "endRoad": "EAST" },
+    { "type": "addVehicle", "vehicleId": "N_STILL_GOING", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "step" },
+
+    { "type": "addVehicle", "vehicleId": "N_LATE_1", "startRoad": "NORTH", "endRoad": "SOUTH" },
+    { "type": "addVehicle", "vehicleId": "S_LATE_1", "startRoad": "SOUTH", "endRoad": "NORTH" },
+    { "type": "step" }, { "type": "step" }, { "type": "step" },
+
+    { "type": "addVehicle", "vehicleId": "FINAL_WAVE_1", "startRoad": "WEST", "endRoad": "NORTH" },
+    { "type": "addVehicle", "vehicleId": "FINAL_WAVE_2", "startRoad": "EAST", "endRoad": "SOUTH" },
+    { "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" },
+    { "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" },
+    { "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" },
+    { "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" },
+    { "type": "step" }, { "type": "step" }, { "type": "step" }, { "type": "step" }
+  ]
+}

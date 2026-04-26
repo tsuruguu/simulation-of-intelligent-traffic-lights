@@ -7,23 +7,24 @@ import org.junit.jupiter.api.DisplayName;
 
 class TrafficLightTest {
     private TrafficLight light;
+    private Intersection intersection; // Dodano pole skrzyżowania dla testów przepustowości
 
     @BeforeEach
     void setUp() {
-        light = new TrafficLight(Direction.NORTH);
+        intersection = new Intersection(); // Inicjalizujemy całe skrzyżowanie
+        light = intersection.getTrafficLight(Direction.NORTH); // Pobieramy konkretne światło
     }
 
     @Test
     void testYellowLightInterlock() {
         // 0. Najpierw musimy odczekać fazę RED, żeby móc przejść na GREEN
-        // (MIN_RED_DURATION = 3)
         for(int i = 0; i < 4; i++) light.incrementTime();
 
         // 1. Teraz przejście na zielone zadziała
         light.transitionTo(LightState.GREEN);
         assertEquals(LightState.GREEN, light.getCurrentState(), "Sygnalizator powinien być zielony");
 
-        // Daj mu "pożyć" w zielonym (MIN_GREEN_DURATION = 5)
+        // Daj mu "pożyć" w zielonym
         for(int i = 0; i < 6; i++) light.incrementTime();
 
         // 2. Poproś o czerwone - system POWINIEN wymusić żółte
@@ -36,19 +37,19 @@ class TrafficLightTest {
     @Test
     void testGreenArrowLogic() {
         Vehicle rightTurner = new Vehicle("V1", Direction.NORTH, Direction.EAST, 0);
-        Vehicle straightGoer = new Vehicle("V2", Direction.NORTH, Direction.SOUTH, 0); // Prosto
+        Vehicle straightGoer = new Vehicle("V2", Direction.NORTH, Direction.SOUTH, 0);
 
         light.transitionTo(LightState.RED);
         light.setRightArrow(true);
 
-        assertTrue(light.allowsPassage(rightTurner), "Auto skręcające w prawo powinno przejechać na zielonej strzałce.");
-        assertFalse(light.allowsPassage(straightGoer), "Auto jadące prosto nie może jechać na samej strzałce.");
+        // Zaktualizowano o parametr intersection
+        assertTrue(light.allowsPassage(rightTurner, intersection), "Auto skręcające w prawo powinno przejechać na zielonej strzałce.");
+        assertFalse(light.allowsPassage(straightGoer, intersection), "Auto jadące prosto nie może jechać na samej strzałce.");
     }
 
     @Test
     @DisplayName("Should forbid U-turn on green arrow but allow it on full green")
     void testUturnOnGreenArrow() {
-        TrafficLight light = new TrafficLight(Direction.NORTH);
         Vehicle uturnVehicle = new Vehicle("V1", Direction.NORTH, Direction.NORTH, 0);
         Vehicle rightTurnVehicle = new Vehicle("V2", Direction.NORTH, Direction.EAST, 0);
 
@@ -56,14 +57,14 @@ class TrafficLightTest {
         light.transitionTo(LightState.RED);
         light.setRightArrow(true);
 
-        assertTrue(light.allowsPassage(rightTurnVehicle), "Skręt w prawo powinien być dozwolony na strzałce");
-        assertFalse(light.allowsPassage(uturnVehicle), "Zawracanie powinno być ZABRONIONE na strzałce");
+        assertTrue(light.allowsPassage(rightTurnVehicle, intersection), "Skręt w prawo powinien być dozwolony na strzałce");
+        assertFalse(light.allowsPassage(uturnVehicle, intersection), "Zawracanie powinno być ZABRONIONE na strzałce");
 
         // 2. Pełne zielone
-        for(int i = 0; i < 4; i++) light.incrementTime();
-
+        for(int i = 0; i < 10; i++) light.incrementTime();
         light.transitionTo(LightState.GREEN);
-        light.incrementTime(); // Aktywuj czas w zielonym
-        assertTrue(light.allowsPassage(uturnVehicle), "Zawracanie powinno być dozwolone na pełnym zielonym");
+        light.incrementTime();
+
+        assertTrue(light.allowsPassage(uturnVehicle, intersection), "Zawracanie powinno być dozwolone na pełnym zielonym");
     }
 }

@@ -20,14 +20,48 @@ public class Intersection {
     private static final boolean[][] CONFLICT_MATRIX = new boolean[Direction.values().length][Direction.values().length];
 
     static {
-        // Te pary NIE MOGĄ mieć zielonego jednocześnie
+        // 1. Główne konflikty prostopadłe (standard)
         setConflict(Direction.NORTH, Direction.EAST);
         setConflict(Direction.NORTH, Direction.WEST);
         setConflict(Direction.SOUTH, Direction.EAST);
         setConflict(Direction.SOUTH, Direction.WEST);
-        // Jeśli chcesz być super-dokładna: zawracanie technicznie koliduje
-        // z jazdą prosto z naprzeciwka, ale przy Twoim podziale na fazy (N-S razem)
-        // wystarczy pilnować blokady osi prostopadłej.
+    }
+
+// W pliku Intersection.java zaktualizuj metodę isStateSafe i dodaj pomocników:
+
+    /**
+     * Weryfikuje bezpieczeństwo stanu skrzyżowania w oparciu o macierz konfliktów.
+     * Sprawdza, czy żadne dwa kierunki uznane za kolizyjne nie mają jednocześnie zapalonego
+     * światła zielonego lub żółtego (faza przejściowa).
+     *
+     * @return true, jeśli stan jest bezpieczny; false, jeśli występuje konflikt prostopadły.
+     */
+    public boolean isStateSafe() {
+        Direction[] dirs = Direction.values();
+        for (int i = 0; i < dirs.length; i++) {
+            for (int j = i + 1; j < dirs.length; j++) {
+                TrafficLight lightA = trafficLights.get(dirs[i]);
+                TrafficLight lightB = trafficLights.get(dirs[j]);
+
+                // Sprawdzamy tylko sytuacje, gdzie oba sygnalizatory blokują wjazd (GREEN/YELLOW)
+                if (lightA.isBlocking() && lightB.isBlocking()) {
+
+                    // Kluczowe uproszczenie: Interesują nas tylko konflikty z macierzy (N vs E, N vs W itd.)
+                    // Nie sprawdzamy tu pojazdów - tym zajmuje się TrafficLight.allowsPassage
+                    if (isConflicting(dirs[i], dirs[j])) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Pomocnicza metoda sprawdzająca konflikt w statycznej macierzy.
+     */
+    public boolean isConflicting(Direction d1, Direction d2) {
+        return CONFLICT_MATRIX[d1.ordinal()][d2.ordinal()];
     }
 
     public Intersection() {
@@ -43,33 +77,6 @@ public class Intersection {
     private static void setConflict(Direction d1, Direction d2) {
         CONFLICT_MATRIX[d1.ordinal()][d2.ordinal()] = true;
         CONFLICT_MATRIX[d2.ordinal()][d1.ordinal()] = true;
-    }
-
-    /**
-     * Kluczowa metoda bezpieczeństwa (Safety Interlock).
-     * Sprawdza, czy obecna konfiguracja świateł nie doprowadzi do katastrofy.
-     * Uwzględnia asymetrię - sprawdza każdą parę sygnalizatorów z osobna.
-     */
-    public boolean isStateSafe() {
-        Direction[] dirs = Direction.values();
-        for (int i = 0; i < dirs.length; i++) {
-            for (int j = i + 1; j < dirs.length; j++) {
-                if (CONFLICT_MATRIX[i][j]) {
-                    // ZMIANA: Sprawdzamy czy którykolwiek sygnalizator NIE JEST czerwony
-                    // Jeśli jeden ma GREEN/YELLOW, a drugi też chce GREEN/YELLOW -> Konflikt
-                    TrafficLight lightA = trafficLights.get(dirs[i]);
-                    TrafficLight lightB = trafficLights.get(dirs[j]);
-
-                    boolean lightANotRed = lightA.getCurrentState() != LightState.RED;
-                    boolean lightBNotRed = lightB.getCurrentState() != LightState.RED;
-
-                    if (lightANotRed && lightBNotRed) {
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     /**
@@ -106,19 +113,6 @@ public class Intersection {
         return Math.min((double) getWaitingCountOnRoad(direction) / maxExpectedCars, 1.0);
     }
 
-    public void setPhase(boolean vertical) {
-        if (vertical) {
-            getTrafficLight(Direction.NORTH).transitionTo(LightState.GREEN);
-            getTrafficLight(Direction.SOUTH).transitionTo(LightState.GREEN);
-            getTrafficLight(Direction.EAST).transitionTo(LightState.RED);
-            getTrafficLight(Direction.WEST).transitionTo(LightState.RED);
-        } else {
-            getTrafficLight(Direction.NORTH).transitionTo(LightState.RED);
-            getTrafficLight(Direction.SOUTH).transitionTo(LightState.RED);
-            getTrafficLight(Direction.EAST).transitionTo(LightState.GREEN);
-            getTrafficLight(Direction.WEST).transitionTo(LightState.GREEN);
-        }
-    }
 
     // --- Pozostałe metody bez zmian ---
 

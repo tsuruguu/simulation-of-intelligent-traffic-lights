@@ -26,6 +26,9 @@ public class OutputWriter {
 
         // Formatowanie dat w standardzie ISO-8601 (zamiast timestampów)
         this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        // W konstruktorze OutputWriter.java
+        this.objectMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS);
     }
 
     /**

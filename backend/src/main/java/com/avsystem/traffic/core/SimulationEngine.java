@@ -25,7 +25,7 @@ public class SimulationEngine {
     public SimulationEngine(TrafficStrategy strategy) {
         this.intersection = new Intersection();
         this.results = new OutputDTO();
-        this.stepManager = new StepManager(intersection);
+        this.stepManager = new StepManager(intersection, 200.0);
         this.brain = strategy;
         this.currentStep = 0;
     }

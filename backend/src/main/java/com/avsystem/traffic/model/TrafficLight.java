@@ -13,10 +13,10 @@ public class TrafficLight {
     private final Direction direction;
 
     // Stałe konfiguracyjne - "Złote parametry" inżynierii ruchu
-    private static final int YELLOW_DURATION = 2;   // Czas czyszczenia skrzyżowania
+    private static final int YELLOW_DURATION = 1;   // Czas czyszczenia skrzyżowania
     // W TrafficLight.java zmień stałe:
-    private static final int MIN_GREEN_DURATION = 1; // Skrócone z 5
-    private static final int MIN_RED_DURATION = 1;   // Skrócone z 3
+    private static final int MIN_GREEN_DURATION = 3; // Skrócone z 5
+    private static final int MIN_RED_DURATION = 3;   // Skrócone z 3
 
     public TrafficLight(Direction direction) {
         this.direction = direction;
@@ -42,6 +42,10 @@ public class TrafficLight {
      */
     public void setRightArrow(boolean active) {
         this.rightArrowActive = active;
+    }
+
+    public boolean isBlocking() {
+        return this.currentState == LightState.GREEN || this.currentState == LightState.YELLOW;
     }
 
     /**
@@ -102,17 +106,40 @@ public class TrafficLight {
         }
     }
 
+// W pliku TrafficLight.java zaktualizuj pozwala na wjazd:
+
     /**
-     * Decyzja o przejeździe zależna od intencji pojazdu (Zielona Strzałka).
+     * Rozszerzona logika wjazdu uwzględniająca ustępowanie pierwszeństwa.
      */
-    public boolean allowsPassage(Vehicle vehicle) {
-        // Jeśli jest zielone, jedziemy!
-        if (this.currentState == LightState.GREEN) return true;
+    public boolean allowsPassage(Vehicle vehicle, Intersection intersection) {
+        // 1. Podstawowy warunek: Czerwone światło bez strzałki = STÓJ
+        if (this.currentState == LightState.RED && !this.rightArrowActive) return false;
 
-        // Jeśli czerwone, sprawdzamy strzałkę (tylko dla skrętu w prawo)
-        if (this.rightArrowActive && vehicle.isTurningRight()) return true;
+        // 2. Jeśli jest zielone, sprawdź kolizje dla lewoskrętu (Yield logic)
+        if (this.currentState == LightState.GREEN && vehicle.isTurningLeft()) {
+            Direction oppositeDir = getOpposite(this.direction);
+            Road oppositeRoad = intersection.getRoad(oppositeDir);
+            TrafficLight oppositeLight = intersection.getTrafficLight(oppositeDir);
 
-        return false;
+            // Ustąp, jeśli z naprzeciwka ktoś jedzie prosto LUB w prawo na zielonym
+            if (oppositeLight.allowsPassage() && !oppositeRoad.isEmpty()) {
+                Vehicle oncoming = oppositeRoad.peekVehicle();
+                if (oncoming.isGoingStraight() || oncoming.isTurningRight()) {
+                    return false; // Musimy poczekać, aż droga z naprzeciwka będzie wolna
+                }
+            }
+        }
+
+        // 3. Zielona strzałka (tylko dla skrętu w prawo)
+        if (this.currentState == LightState.RED && this.rightArrowActive) {
+            return vehicle.isTurningRight();
+        }
+
+        return this.currentState == LightState.GREEN;
+    }
+
+    private Direction getOpposite(Direction dir) {
+        return Direction.values()[(dir.ordinal() + 2) % 4];
     }
 
     /**

@@ -14,9 +14,11 @@ public class StepManager {
 
     private static final Logger LOGGER = Logger.getLogger(StepManager.class.getName());
     private final Intersection intersection;
+    private final double stepTimeBudget;
 
-    public StepManager(Intersection intersection) {
+    public StepManager(Intersection intersection, double stepTimeBudget) {
         this.intersection = intersection;
+        this.stepTimeBudget = stepTimeBudget;
     }
 
     /**
@@ -71,7 +73,6 @@ public class StepManager {
 
         if (road.isEmpty()) return;
 
-        double stepTimeBudget = 180.0; // Zwiększony lekko budżet
         double timeConsumed = 0.0;
         int movedInThisStep = 0;
 
@@ -81,7 +82,7 @@ public class StepManager {
             if (!vehicle.isGoingStraight()) travelCost += 15.0;
 
             // ZMIANA: Pozwól jechać jeśli (to pierwsze auto) LUB (mieści się w budżecie)
-            if (light.allowsPassage(vehicle) && (movedInThisStep == 0 || timeConsumed + travelCost <= stepTimeBudget)) {
+            if (light.allowsPassage(vehicle, intersection) && (movedInThisStep == 0 || timeConsumed + travelCost <= stepTimeBudget)){
                 Vehicle departingVehicle = road.removeVehicle();
                 results.add(departingVehicle.getId());
                 timeConsumed += travelCost;

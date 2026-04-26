@@ -94,6 +94,16 @@ public class Vehicle {
         return (end - start + 4) % 4 == 0;
     }
 
+    /**
+     * Sprawdza, czy pojazd wykonuje manewr skrętu w lewo.
+     * (End - Start + 4) % 4 == 3
+     */
+    public boolean isTurningLeft() {
+        int start = startRoad.ordinal();
+        int end = endRoad.ordinal();
+        return (end - start + 4) % 4 == 3;
+    }
+
     // --- Gettery ---
 
     public String getId() { return id; }

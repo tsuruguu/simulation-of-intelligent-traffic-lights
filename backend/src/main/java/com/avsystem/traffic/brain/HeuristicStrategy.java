@@ -15,7 +15,7 @@ import java.util.List;
 public class HeuristicStrategy implements TrafficStrategy {
 
     // Parametry czasowe
-    private static final int MIN_PHASE_DURATION = 1;
+    private static final int MIN_PHASE_DURATION = 5;
     private static final int MAX_PHASE_DURATION = 40;
 
     // Parametry algorytmu Max-Pressure
@@ -96,16 +96,17 @@ public class HeuristicStrategy implements TrafficStrategy {
     }
 
     private void transition(Intersection intersection, List<Direction> closing, List<Direction> opening) {
-        // 1. Najpierw prosimy o zamknięcie obecnej fazy
+        // 1. Prosimy o zamknięcie obecnej fazy (przejście GREEN -> YELLOW -> RED)
         closing.forEach(dir -> intersection.getTrafficLight(dir).transitionTo(LightState.RED));
 
-        // 2. Otwieramy nową fazę TYLKO JEŚLI stara jest już bezpiecznie CZERWONA
-        // To zapobiega konfliktom w trakcie fazy YELLOW.
+        // 2. Kluczowa zmiana: Otwieramy nową fazę TYLKO jeśli ŻADEN z zamykanych kierunków nie blokuje już drogi
         boolean isSafeToOpen = closing.stream()
-                .allMatch(dir -> intersection.getTrafficLight(dir).getCurrentState() == LightState.RED);
+                .noneMatch(dir -> intersection.getTrafficLight(dir).isBlocking());
 
         if (isSafeToOpen) {
             opening.forEach(dir -> intersection.getTrafficLight(dir).transitionTo(LightState.GREEN));
+        } else {
+            // Logika opcjonalna: Możesz tu dodać logowanie, że czekamy na "wyczyszczenie" skrzyżowania
         }
     }
 

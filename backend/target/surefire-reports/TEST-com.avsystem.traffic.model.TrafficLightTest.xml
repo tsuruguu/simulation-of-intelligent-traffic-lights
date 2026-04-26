@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="PL"/>
     <property name="sun.boot.library.path" value="/Users/dobrawa/.sdkman/candidates/java/21.0.2-tem/lib"/>
-    <property name="sun.java.command" value="/Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/surefire/surefirebooter-20260425222926946_3.jar /Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/surefire 2026-04-25T22-29-26_913-jvmRun1 surefire-20260425222926946_1tmp surefire_0-20260425222926946_2tmp"/>
+    <property name="sun.java.command" value="/Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/surefire/surefirebooter-20260426183443308_3.jar /Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/surefire 2026-04-26T18-34-43_274-jvmRun1 surefire-20260426183443308_1tmp surefire_0-20260426183443308_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/test-classes:/Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/classes:/Users/dobrawa/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.17.0/jackson-databind-2.17.0.jar:/Users/dobrawa/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.17.0/jackson-annotations-2.17.0.jar:/Users/dobrawa/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.17.0/jackson-core-2.17.0.jar:/Users/dobrawa/.m2/repository/net/bytebuddy/byte-buddy/1.14.9/byte-buddy-1.14.9.jar:/Users/dobrawa/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.17.0/jackson-datatype-jsr310-2.17.0.jar:/Users/dobrawa/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/Users/dobrawa/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/dobrawa/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/Users/dobrawa/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/dobrawa/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/Users/dobrawa/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -28,7 +28,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/surefire/surefirebooter-20260425222926946_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/dobrawa/Projects/simulation-of-intelligent-traffic-light/simulation-of-intelligent-traffic-lights/backend/target/surefire/surefirebooter-20260426183443308_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.2+13-LTS"/>
     <property name="user.name" value="dobrawa"/>
@@ -56,6 +56,6 @@
     <property name="java.class.version" value="65.0"/>
   </properties>
   <testcase name="testYellowLightInterlock" classname="com.avsystem.traffic.model.TrafficLightTest" time="0.001"/>
-  <testcase name="testGreenArrowLogic" classname="com.avsystem.traffic.model.TrafficLightTest" time="0.001"/>
+  <testcase name="testGreenArrowLogic" classname="com.avsystem.traffic.model.TrafficLightTest" time="0.0"/>
   <testcase name="testUturnOnGreenArrow" classname="com.avsystem.traffic.model.TrafficLightTest" time="0.0"/>
 </testsuite>
