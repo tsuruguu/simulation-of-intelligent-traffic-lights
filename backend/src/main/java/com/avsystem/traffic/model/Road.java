@@ -26,7 +26,6 @@ public class Road {
 
     public Road(Direction direction) {
         this.direction = direction;
-        // ArrayDeque jest znacznie szybszy i lżejszy niż LinkedList (brak overheadu na nody)
         this.vehicleQueue = new ArrayDeque<>();
     }
 
@@ -86,15 +85,13 @@ public class Road {
         double totalCost = 0;
         boolean isFirst = true;
         for (Vehicle v : vehicleQueue) {
-            // Pierwsze auto płaci za start, kolejne za headway (odstęp)
             totalCost += isFirst ? 30.0 : 15.0;
-            if (!v.isGoingStraight()) totalCost += 15.0; // Koszt skrętu
+            if (!v.isGoingStraight()) totalCost += 15.0;
             isFirst = false;
         }
         return totalCost;
     }
 
-    // --- Standardowe metody dostępowe ---
 
     public Vehicle peekVehicle() { return vehicleQueue.peek(); }
     public int getVehicleCount() { return vehicleQueue.size(); }

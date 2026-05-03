@@ -8,7 +8,6 @@ class VehicleTest {
 
     @Test
     void testRightTurnAlgebra() {
-        // Test dla każdego kierunku (Ruch prawostronny: N->E, E->S, S->W, W->N)
         Vehicle v1 = new Vehicle("V1", Direction.NORTH, Direction.EAST, 0);
         Vehicle v2 = new Vehicle("V2", Direction.EAST, Direction.SOUTH, 0);
         Vehicle v3 = new Vehicle("V3", Direction.SOUTH, Direction.WEST, 0);
@@ -31,7 +30,6 @@ class VehicleTest {
 
     @Test
     void testUturnLogic() {
-        // Start i End to samo = zawracanie
         Vehicle uturn = new Vehicle("V_UTURN", Direction.NORTH, Direction.NORTH, 0);
 
         assertTrue(uturn.isTurningBack(), "Pojazd powinien zostać rozpoznany jako zawracający");
@@ -42,17 +40,11 @@ class VehicleTest {
     @Test
     @DisplayName("Modular algebra should correctly identify maneuvers for all directions")
     void testAllManeuvers() {
-        // North -> South (Straight)
         assertTrue(new Vehicle("V", Direction.NORTH, Direction.SOUTH, 0).isGoingStraight());
-        // West -> East (Straight)
         assertTrue(new Vehicle("V", Direction.WEST, Direction.EAST, 0).isGoingStraight());
 
-        // North -> West (Right turn - Polish traffic)
-        // Uwaga: Zależy od Twojej definicji Direction. Jeśli North=0, East=1, South=2, West=3:
-        // Skręt w prawo z North (0) to East (1).
         assertTrue(new Vehicle("V", Direction.NORTH, Direction.EAST, 0).isTurningRight());
 
-        // Zawracanie (U-turn)
         assertTrue(new Vehicle("V", Direction.SOUTH, Direction.SOUTH, 0).isTurningBack());
     }
 
@@ -60,15 +52,13 @@ class VehicleTest {
     @DisplayName("Telemetry O(1) should match manual calculations after multiple operations")
     void testTelemetryAccuracy() {
         Road road = new Road(Direction.NORTH);
-        road.addVehicle(new Vehicle("V1", Direction.NORTH, Direction.SOUTH, 10)); // entry at 10
-        road.addVehicle(new Vehicle("V2", Direction.NORTH, Direction.SOUTH, 20)); // entry at 20
+        road.addVehicle(new Vehicle("V1", Direction.NORTH, Direction.SOUTH, 10));
+        road.addVehicle(new Vehicle("V2", Direction.NORTH, Direction.SOUTH, 20));
 
         int currentStep = 30;
-        // V1 czeka 20, V2 czeka 10. Średnia = 15.
         assertEquals(15.0, road.getAverageWaitTime(currentStep), 0.001);
 
-        road.removeVehicle(); // Usuwamy V1
-        // Zostaje V2 (czeka 10). Średnia = 10.
+        road.removeVehicle();
         assertEquals(10.0, road.getAverageWaitTime(currentStep), 0.001);
     }
 }

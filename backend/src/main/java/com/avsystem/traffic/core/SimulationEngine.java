@@ -47,7 +47,6 @@ public class SimulationEngine {
      * Brak 'instanceof' sprawia, że silnik jest odporny na zmiany w typach komend.
      */
     private void executeCommand(CommandDTO command) {
-        // Polimorficzne wywołanie - komenda sama wie, co wywołać w silniku
         command.execute(this);
     }
 
@@ -74,20 +73,16 @@ public class SimulationEngine {
     public StepStatusDTO handleStep() {
         currentStep++;
 
-        // 1. Optymalizacja: Strategia (AI/Heurystyka) dostosowuje światła do stanu dróg
         brain.optimizeTraffic(intersection, currentStep);
 
-        // 2. Fizyka: StepManager przesuwa pojazdy i sprawdza Interlock bezpieczeństwa
         List<String> vehiclesThatLeft = stepManager.performStep(currentStep);
 
-        // 3. Raportowanie: Tworzymy DTO wyniku i rejestrujemy w wynikach globalnych
         StepStatusDTO stepStatus = new StepStatusDTO(vehiclesThatLeft);
         results.addStepStatus(stepStatus);
 
         return stepStatus;
     }
 
-    // --- LOGIKA "NEXT-GEN" ---
 
     /**
      * Pozwala na dynamiczną zmianę strategii sterowania w locie.

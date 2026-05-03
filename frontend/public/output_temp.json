@@ -1,34 +1,24 @@
 {
   "stepStatuses" : [ {
-    "leftVehicles" : [ "V1", "EMERGENCY_1", "V2", "V3" ]
+    "leftVehicles" : [ "V1", "V3", "V4" ]
   }, {
-    "leftVehicles" : [ "S_STRAIGHT_1", "S_STRAIGHT_2" ]
+    "leftVehicles" : [ "V11", "V12", "V13", "V14" ]
   }, {
-    "leftVehicles" : [ "V_CONT_3" ]
-  }, {
-    "leftVehicles" : [ "N_LEFT_1", "N_LEFT_2", "V_CONT_1", "V_CONT_2", "V_JAM_1", "V_JAM_2", "V_JAM_3", "V_JAM_4" ]
+    "leftVehicles" : [ "V2", "V7", "V8", "V9", "V10" ]
   }, {
     "leftVehicles" : [ ]
   }, {
-    "leftVehicles" : [ "N_STILL_GOING" ]
+    "leftVehicles" : [ "V21", "V24", "V25", "V26" ]
   }, {
-    "leftVehicles" : [ "N_LATE_1", "S_LATE_1" ]
-  }, {
-    "leftVehicles" : [ ]
+    "leftVehicles" : [ "V22", "V23" ]
   }, {
     "leftVehicles" : [ ]
   }, {
-    "leftVehicles" : [ ]
+    "leftVehicles" : [ "V5", "V15", "V6", "V18", "V19", "V20", "V30", "V31", "V32" ]
   }, {
-    "leftVehicles" : [ ]
+    "leftVehicles" : [ "V16", "V17", "V27", "V28", "V29" ]
   }, {
-    "leftVehicles" : [ ]
-  }, {
-    "leftVehicles" : [ ]
-  }, {
-    "leftVehicles" : [ "BUS_100", "E_BUS_GANG", "W_SIDE_1", "W_STRAIGHT_1", "FINAL_WAVE_1" ]
-  }, {
-    "leftVehicles" : [ "E_LEFT_1", "FINAL_WAVE_2" ]
+    "leftVehicles" : [ "V45", "V46", "V47", "V48" ]
   }, {
     "leftVehicles" : [ ]
   }, {
@@ -41,6 +31,16 @@
     "leftVehicles" : [ ]
   }, {
     "leftVehicles" : [ ]
+  }, {
+    "leftVehicles" : [ ]
+  }, {
+    "leftVehicles" : [ ]
+  }, {
+    "leftVehicles" : [ ]
+  }, {
+    "leftVehicles" : [ ]
+  }, {
+    "leftVehicles" : [ "V33", "V34", "V35", "V36", "V37", "V38", "V49", "V39", "V40", "V41", "V42", "V43", "V44", "V50" ]
   }, {
     "leftVehicles" : [ ]
   }, {

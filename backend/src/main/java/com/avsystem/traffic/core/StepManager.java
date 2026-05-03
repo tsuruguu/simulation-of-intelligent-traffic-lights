@@ -27,15 +27,12 @@ public class StepManager {
     public List<String> performStep(int currentStep) {
         List<String> vehiclesThatLeft = new ArrayList<>();
 
-        // 1. Aktualizacja stanu infrastruktury (inkrementacja czasu trwania faz)
         updateTrafficLights();
 
-        // 2. Weryfikacja bezpieczeństwa (Safety Interlock Check)
         if (!intersection.isStateSafe()) {
             handleSafetyBreach(currentStep);
         }
 
-        // 3. Procesowanie ruchu na każdej drodze
         for (Direction dir : Direction.values()) {
             processRoadTraffic(dir, currentStep, vehiclesThatLeft);
         }
@@ -57,7 +54,6 @@ public class StepManager {
     private void handleSafetyBreach(int currentStep) {
         LOGGER.severe("CRITICAL SAFETY BREACH at step " + currentStep + ": Emergency All-Red forced.");
 
-        // Wymuszamy przejście wszystkich świateł na RED (poprzez YELLOW jeśli trzeba)
         for (TrafficLight light : intersection.getAllTrafficLights().values()) {
             light.transitionTo(LightState.RED);
         }
@@ -81,7 +77,6 @@ public class StepManager {
             double travelCost = (timeConsumed == 0) ? 30.0 : 15.0;
             if (!vehicle.isGoingStraight()) travelCost += 15.0;
 
-            // ZMIANA: Pozwól jechać jeśli (to pierwsze auto) LUB (mieści się w budżecie)
             if (light.allowsPassage(vehicle, intersection) && (movedInThisStep == 0 || timeConsumed + travelCost <= stepTimeBudget)){
                 Vehicle departingVehicle = road.removeVehicle();
                 results.add(departingVehicle.getId());

@@ -38,8 +38,8 @@ public class Vehicle {
      * Logika gotowa pod rozszerzenie o pojazdy uprzywilejowane (np. ID zaczynające się od 'BUS_').
      */
     public double getPriorityWeight() {
-        if (id.startsWith("EMERGENCY")) return 5.0; // Priorytet dla karetek
-        if (id.startsWith("BUS")) return 2.5;       // Priorytet dla transportu publicznego
+        if (id.startsWith("EMERGENCY")) return 5.0;
+        if (id.startsWith("BUS")) return 2.5;
         return 1.0;
     }
 
@@ -50,7 +50,6 @@ public class Vehicle {
      */
     public double getFrustrationIndex(int currentStep) {
         int waitTime = getWaitTime(currentStep);
-        // Frustracja = Czas_Oczekiwania + (Liczba_Zatrzymań * mnożnik_irytacji)
         return waitTime + (stopCount * 3.5);
     }
 
@@ -104,7 +103,6 @@ public class Vehicle {
         return (end - start + 4) % 4 == 3;
     }
 
-    // --- Gettery ---
 
     public String getId() { return id; }
     public Direction getStartRoad() { return startRoad; }

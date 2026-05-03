@@ -18,16 +18,12 @@ public class OutputWriter {
     public OutputWriter() {
         this.objectMapper = new ObjectMapper();
 
-        // Rejestracja modułów dla nowoczesnych typów danych (np. Java 8 Time)
         this.objectMapper.findAndRegisterModules();
 
-        // Zapewnienie czytelności pliku (Pretty Print) zgodnie z Twoją sugestią
         this.objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
 
-        // Formatowanie dat w standardzie ISO-8601 (zamiast timestampów)
         this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        // W konstruktorze OutputWriter.java
         this.objectMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.ALWAYS);
     }
 
@@ -43,7 +39,6 @@ public class OutputWriter {
             throw new IllegalArgumentException("Output data cannot be null");
         }
 
-        // Zapis do pliku z automatycznym formatowaniem (Pretty Print jest włączony w konstruktorze)
         objectMapper.writeValue(new File(filePath), outputData);
     }
 
@@ -54,11 +49,9 @@ public class OutputWriter {
     public void writeDebugHistory(String filePath, Object detailedHistory) throws IOException {
         if (detailedHistory == null) return;
 
-        // Zapisujemy dodatkowy plik z pełną telemetrią (stany świateł, Q-values sieci, frustracja aut)
         objectMapper.writeValue(new File(filePath), detailedHistory);
     }
 
-    // --- LOGIKA "NEXT-GEN" ---
 
     /**
      * Serializacja asynchroniczna przy użyciu CompletableFuture.

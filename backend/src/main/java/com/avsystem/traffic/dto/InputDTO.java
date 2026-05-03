@@ -19,7 +19,6 @@ public class InputDTO {
     @JsonProperty("commands")
     private List<CommandDTO> commands = new ArrayList<>();
 
-    // Pole przechowujące opis pierwszego napotkanego błędu (do celów diagnostycznych)
     private String validationErrorDetail = "";
 
     public InputDTO() {
@@ -38,7 +37,6 @@ public class InputDTO {
             return false;
         }
 
-        // Kaskadowa walidacja - sprawdzamy każdą komendę z osobna
         for (int i = 0; i < commands.size(); i++) {
             CommandDTO command = commands.get(i);
             if (command == null) {
@@ -46,7 +44,6 @@ public class InputDTO {
                 return false;
             }
             if (!command.isValid()) {
-                // Agregujemy błąd z konkretnej komendy (np. AddVehicleCommand)
                 this.validationErrorDetail = String.format("Error in command #%d [%s]: %s",
                         i, command.getCommandType(), command.getValidationErrorMessage());
                 return false;

@@ -20,14 +20,12 @@ public class Intersection {
     private static final boolean[][] CONFLICT_MATRIX = new boolean[Direction.values().length][Direction.values().length];
 
     static {
-        // 1. Główne konflikty prostopadłe (standard)
         setConflict(Direction.NORTH, Direction.EAST);
         setConflict(Direction.NORTH, Direction.WEST);
         setConflict(Direction.SOUTH, Direction.EAST);
         setConflict(Direction.SOUTH, Direction.WEST);
     }
 
-// W pliku Intersection.java zaktualizuj metodę isStateSafe i dodaj pomocników:
 
     /**
      * Weryfikuje bezpieczeństwo stanu skrzyżowania w oparciu o macierz konfliktów.
@@ -43,11 +41,8 @@ public class Intersection {
                 TrafficLight lightA = trafficLights.get(dirs[i]);
                 TrafficLight lightB = trafficLights.get(dirs[j]);
 
-                // Sprawdzamy tylko sytuacje, gdzie oba sygnalizatory blokują wjazd (GREEN/YELLOW)
                 if (lightA.isBlocking() && lightB.isBlocking()) {
 
-                    // Kluczowe uproszczenie: Interesują nas tylko konflikty z macierzy (N vs E, N vs W itd.)
-                    // Nie sprawdzamy tu pojazdów - tym zajmuje się TrafficLight.allowsPassage
                     if (isConflicting(dirs[i], dirs[j])) {
                         return false;
                     }
@@ -114,7 +109,6 @@ public class Intersection {
     }
 
 
-    // --- Pozostałe metody bez zmian ---
 
     public int getTotalWaitingVehicles() {
         return roads.values().stream().mapToInt(Road::getVehicleCount).sum();

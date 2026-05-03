@@ -10,8 +10,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
-import com.avsystem.traffic.model.TrafficLight; // Tego brakowało
-import java.util.logging.Logger;                // Tego brakowało
+import com.avsystem.traffic.model.TrafficLight;
+import java.util.logging.Logger;
 
 public class NeuralNetworkStrategy implements TrafficStrategy {
 
@@ -57,7 +57,6 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
             JsonNode hoNode = weightsNode.get("hidden_output");
             JsonNode bNode = weightsNode.get("biases");
 
-            // Dynamiczne ustalanie rozmiarów na podstawie JSON
             this.inputSize = ihNode.size();
             this.hiddenSize = ihNode.get(0).size();
             this.outputSize = hoNode.get(0).size();
@@ -67,7 +66,6 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
             this.weightsHiddenOutput = new double[hiddenSize][outputSize];
             this.biasOutput = new double[outputSize];
 
-            // Wczytywanie wag
             for (int i = 0; i < inputSize; i++) {
                 for (int j = 0; j < hiddenSize; j++) {
                     weightsInputHidden[i][j] = ihNode.get(i).get(j).asDouble();
@@ -109,23 +107,16 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
         double[] currentQ = predict(state);
         double[] nextQ = predict(nextState);
 
-        // Szukamy najlepszej przyszłej wartości Q dla równania Bellmana
         double maxNextQ = nextQ[0];
         for (double q : nextQ) if (q > maxNextQ) maxNextQ = q;
 
-        // Standardowe równanie Bellmana dla wybranej akcji
         double target = reward + (discountFactor * maxNextQ);
         double error = target - currentQ[action];
 
-        // AKTUALIZACJA WAG: Skupiamy się na poprawie neuronu, który podjął decyzję (action)
-        // Dzięki temu neurony zaczną się od siebie różnić (specjalizacja)
         for (int j = 0; j < hiddenSize; j++) {
-            // Poprawiamy tylko wagi dla akcji, która faktycznie "zawiniła" lub "zasłużyła" na nagrodę
             weightsHiddenOutput[j][action] += learningRate * error;
 
-            // Propagacja błędu do warstwy ukrytej (uproszczony gradient)
             for (int i = 0; i < inputSize; i++) {
-                if (state[i] > 0) { // Tylko dla aktywnych cech wejściowych
                     weightsInputHidden[i][j] += learningRate * error * weightsHiddenOutput[j][action] * 0.1;
                 }
             }
@@ -140,10 +131,8 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
         double[] currentState = captureStateVector(intersection, currentStep);
 
         if (lastState != null) {
-            // Obliczamy nagrodę (im mniejsza frustracja, tym lepiej)
             double reward = lastGlobalFrustration - currentFrustration;
 
-            // Kara za niebezpieczną konfigurację
             if (!intersection.isStateSafe()) {
                 reward -= 50.0;
                 LOGGER.warning("AI PENALIZED: Proposed unsafe configuration.");
@@ -154,14 +143,11 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
 
         double[] qValues;
         if (Math.random() < epsilon) {
-            // RUCH LOSOWY (Eksploracja): Pozwala AI odkrywać nowe ścieżki
             qValues = new double[] {Math.random(), Math.random(), Math.random(), Math.random()};
         } else {
             qValues = predict(currentState);
         }
 
-        // --- KLUCZOWA POPRAWKA: Definicja zmiennej 'action' ---
-        // Wybieramy indeks kierunku, który AI oceniło najwyżej (0-N, 1-E, 2-S, 3-W)
         int action = 0;
         for (int i = 1; i < qValues.length; i++) {
             if (qValues[i] > qValues[action]) {
@@ -172,14 +158,13 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
         applyIndividualDecisions(intersection, qValues);
 
         this.lastState = currentState;
-        this.lastAction = action; // Teraz zmienna jest już widoczna dla kompilatora
+        this.lastAction = action;
         this.lastGlobalFrustration = currentFrustration;
     }
 
     private double[] predict(double[] input) {
         if (!isInitialized) return new double[outputSize];
 
-        // Warstwa ukryta (ReLU)
         double[] hiddenLayer = new double[hiddenSize];
         for (int j = 0; j < hiddenSize; j++) {
             double sum = biasHidden[j];
@@ -189,7 +174,6 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
             hiddenLayer[j] = Math.max(0, sum);
         }
 
-        // Warstwa wyjściowa
         double[] output = new double[outputSize];
         for (int k = 0; k < outputSize; k++) {
             double sum = biasOutput[k];
@@ -205,17 +189,13 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
         if (qValues.length < 4) return;
 
         Direction[] dirs = Direction.values();
-        // 1. Sortujemy indeksy kierunków według wartości Q (malejąco)
         Integer[] indices = {0, 1, 2, 3};
         java.util.Arrays.sort(indices, (a, b) -> Double.compare(qValues[b], qValues[a]));
 
         boolean[] willBeGreen = new boolean[4];
 
-        // 2. Wybieramy kierunki do otwarcia (Greedy Conflict Resolution)
         for (int idx : indices) {
             Direction targetDir = dirs[idx];
-
-            // Sprawdzamy konflikt tylko z tymi, które JUŻ wybraliśmy do otwarcia w tym kroku
             boolean hasConflict = false;
             for (int i = 0; i < 4; i++) {
                 if (willBeGreen[i] && intersection.isConflicting(targetDir, dirs[i])) {
@@ -224,17 +204,14 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
                 }
             }
 
-            // Jeśli brak konfliktu i wartość Q nie jest skrajnie ujemna, planujemy zielone
             if (!hasConflict && qValues[idx] > -1.0) {
                 willBeGreen[idx] = true;
             }
         }
 
-        // 3. Faktyczne przełączanie świateł z uwzględnieniem fazy YELLOW (isBlocking)
         for (int i = 0; i < 4; i++) {
             TrafficLight light = intersection.getTrafficLight(dirs[i]);
             if (willBeGreen[i]) {
-                // Sprawdź, czy kierunki kolizyjne przestały blokować skrzyżowanie (YELLOW check)
                 boolean pathBlockedByYellow = false;
                 for (Direction other : Direction.values()) {
                     if (intersection.isConflicting(dirs[i], other) && intersection.getTrafficLight(other).isBlocking()) {
@@ -246,7 +223,6 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
                 if (!pathBlockedByYellow) {
                     light.transitionTo(LightState.GREEN);
                 } else {
-                    // Jeśli ktoś jeszcze "czyści" skrzyżowanie, czekamy w RED
                     light.transitionTo(LightState.RED);
                 }
             } else {
@@ -258,7 +234,6 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
     private double[] captureStateVector(Intersection intersection, int currentStep) {
         int featuresPerRoad = 5;
         Direction[] dirs = Direction.values();
-        // Zwiększamy rozmiar o 1 dla globalnej cechy czasu trwania fazy
         double[] state = new double[dirs.length * featuresPerRoad + 1];
 
         int i = 0;
@@ -279,8 +254,6 @@ public class NeuralNetworkStrategy implements TrafficStrategy {
             lastVehicleCounts.put(dir, currentCount);
         }
 
-        // 21. CECHA: Czas trwania obecnej fazy (Normalizacja: 0.0 - 1.0 dla 40 kroków)
-        // Pobieramy czas z dowolnego światła, np. NORTH
         int phaseDuration = intersection.getTrafficLight(Direction.NORTH).getDurationInCurrentState();
         state[state.length - 1] = Math.min(phaseDuration / 40.0, 1.0);
 

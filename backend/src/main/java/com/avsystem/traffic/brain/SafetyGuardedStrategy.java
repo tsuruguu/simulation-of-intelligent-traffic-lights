@@ -10,9 +10,9 @@ import java.util.logging.Logger;
  * Jeśli sieć neuronowa podejmie decyzję ryzykowną lub zignoruje krytyczne zatory,
  * system automatycznie przełącza się na tryb awaryjny (Override).
  */
+
 public class SafetyGuardedStrategy implements TrafficStrategy {
 
-    // Próg interwencji, po którym AI zostaje uznane za niestabilne
     private static final int MAX_INTERVENTIONS = 5;
 
     private int interventionCount = 0;
@@ -20,7 +20,6 @@ public class SafetyGuardedStrategy implements TrafficStrategy {
 
     private static final Logger LOGGER = Logger.getLogger(SafetyGuardedStrategy.class.getName());
 
-    // Próg krytyczny w krokach symulacji (np. 300 sekund/kroków)
     private static final int CRITICAL_WAIT_THRESHOLD = 12;
 
     private final TrafficStrategy primaryAI;
@@ -43,20 +42,16 @@ public class SafetyGuardedStrategy implements TrafficStrategy {
 
     @Override
     public void optimizeTraffic(Intersection intersection, int currentStep) {
-        // 0. Jeśli tryb Fail-Safe jest aktywny, pomijamy AI i od razu używamy heurystyki
         if (permanentFailSafeActive) {
             safetyHeuristic.optimizeTraffic(intersection, currentStep);
             return;
         }
 
-        // 1. Sprawdź, czy występuje stan krytyczny (Starvation)
         Direction starvingRoad = findStarvingRoad(intersection, currentStep);
 
         if (starvingRoad != null) {
-            // Inkrementacja licznika interwencji
             interventionCount++;
 
-            // Sprawdzenie, czy należy aktywować stały Fail-Safe
             if (interventionCount >= MAX_INTERVENTIONS) {
                 permanentFailSafeActive = true;
                 LOGGER.severe("PERMANENT FAIL-SAFE ACTIVATED: Neural Network disabled due to excessive safety overrides. " +
@@ -70,7 +65,6 @@ public class SafetyGuardedStrategy implements TrafficStrategy {
 
             safetyHeuristic.optimizeTraffic(intersection, currentStep);
         } else {
-            // STAN BEZPIECZNY: Pozwól sieci neuronowej sterować ruchem
             primaryAI.optimizeTraffic(intersection, currentStep);
         }
     }

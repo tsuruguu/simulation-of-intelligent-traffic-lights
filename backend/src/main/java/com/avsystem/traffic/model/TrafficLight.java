@@ -12,11 +12,9 @@ public class TrafficLight {
     private int durationInCurrentState;
     private final Direction direction;
 
-    // Stałe konfiguracyjne - "Złote parametry" inżynierii ruchu
-    private static final int YELLOW_DURATION = 1;   // Czas czyszczenia skrzyżowania
-    // W TrafficLight.java zmień stałe:
-    private static final int MIN_GREEN_DURATION = 3; // Skrócone z 5
-    private static final int MIN_RED_DURATION = 3;   // Skrócone z 3
+    private static final int YELLOW_DURATION = 1;
+    private static final int MIN_GREEN_DURATION = 3;
+    private static final int MIN_RED_DURATION = 3;
 
     public TrafficLight(Direction direction) {
         this.direction = direction;
@@ -25,11 +23,9 @@ public class TrafficLight {
         this.durationInCurrentState = MIN_RED_DURATION;
     }
 
-    // W TrafficLight.java popraw metodę incrementTime:
     public void incrementTime() {
         this.durationInCurrentState++;
 
-        // AUTOMATYCZNE PRZEJŚCIE: Jeśli jesteśmy w YELLOW i czas minął, przejdź do RED
         if (this.currentState == LightState.YELLOW && durationInCurrentState >= YELLOW_DURATION) {
             this.currentState = LightState.RED;
             this.durationInCurrentState = 0;
@@ -56,7 +52,6 @@ public class TrafficLight {
         if (this.currentState == requestedState) return;
         if (!canChangeState()) return;
 
-        // 1. Zabezpieczenie: Z GREEN (lub YELLOW w trakcie zmiany) do RED zawsze przez YELLOW
         if (this.currentState == LightState.GREEN && requestedState == LightState.RED) {
             this.currentState = LightState.YELLOW;
             this.durationInCurrentState = 0;
@@ -64,16 +59,14 @@ public class TrafficLight {
             return;
         }
 
-        // 2. Obsługa przejścia z YELLOW do RED, gdy czas minął
         if (this.currentState == LightState.YELLOW && requestedState == LightState.RED) {
             if (durationInCurrentState >= YELLOW_DURATION) {
                 this.currentState = LightState.RED;
                 this.durationInCurrentState = 0;
             }
-            return; // Czekamy w YELLOW aż minie czas
+            return;
         }
 
-        // 3. Pozostałe bezpośrednie przejścia (np. RED -> GREEN)
         switch (this.currentState) {
             case RED:
                 if (requestedState == LightState.GREEN) {
@@ -83,7 +76,6 @@ public class TrafficLight {
                 break;
 
             case GREEN:
-                // Jeśli ktoś poprosił o YELLOW bezpośrednio
                 if (requestedState == LightState.YELLOW) {
                     this.currentState = LightState.YELLOW;
                     this.durationInCurrentState = 0;
@@ -106,31 +98,26 @@ public class TrafficLight {
         }
     }
 
-// W pliku TrafficLight.java zaktualizuj pozwala na wjazd:
 
     /**
      * Rozszerzona logika wjazdu uwzględniająca ustępowanie pierwszeństwa.
      */
     public boolean allowsPassage(Vehicle vehicle, Intersection intersection) {
-        // 1. Podstawowy warunek: Czerwone światło bez strzałki = STÓJ
         if (this.currentState == LightState.RED && !this.rightArrowActive) return false;
 
-        // 2. Jeśli jest zielone, sprawdź kolizje dla lewoskrętu (Yield logic)
         if (this.currentState == LightState.GREEN && vehicle.isTurningLeft()) {
             Direction oppositeDir = getOpposite(this.direction);
             Road oppositeRoad = intersection.getRoad(oppositeDir);
             TrafficLight oppositeLight = intersection.getTrafficLight(oppositeDir);
 
-            // Ustąp, jeśli z naprzeciwka ktoś jedzie prosto LUB w prawo na zielonym
             if (oppositeLight.allowsPassage() && !oppositeRoad.isEmpty()) {
                 Vehicle oncoming = oppositeRoad.peekVehicle();
                 if (oncoming.isGoingStraight() || oncoming.isTurningRight()) {
-                    return false; // Musimy poczekać, aż droga z naprzeciwka będzie wolna
+                    return false;
                 }
             }
         }
 
-        // 3. Zielona strzałka (tylko dla skrętu w prawo)
         if (this.currentState == LightState.RED && this.rightArrowActive) {
             return vehicle.isTurningRight();
         }
@@ -158,21 +145,16 @@ public class TrafficLight {
         double utility = 0.0;
 
         if (this.currentState == LightState.GREEN) {
-            // Zysk z przepływu minus strata dla blokowanych kierunków
             utility = (currentRoadPressure * 2.5) - (conflictPressure * 1.5);
-            // Bonus za utrzymanie ciągłości
             utility += Math.min(durationInCurrentState, 10) * 0.2;
         } else {
-            // Strata z blokowania minus zysk dla innych
             utility = (conflictPressure * 2.0) - (currentRoadPressure * 1.8);
-            // Bonus za strzałkę jeśli są chętni do skrętu
             if (this.rightArrowActive) utility += (rightTurners * 1.5);
         }
 
         return utility;
     }
 
-    // --- Gettery ---
 
     public boolean isRightArrowActive() { return rightArrowActive; }
     public LightState getCurrentState() { return currentState; }

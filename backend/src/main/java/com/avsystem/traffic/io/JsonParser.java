@@ -17,11 +17,8 @@ public class JsonParser {
     public JsonParser() {
         this.objectMapper = new ObjectMapper();
 
-        // Rejestracja modułów dla Javy 8+ (np. obsługa typów Optional, LocalDate)
         this.objectMapper.findAndRegisterModules();
 
-        // FAIL_ON_UNKNOWN_PROPERTIES: Jeśli w JSON pojawi się pole, którego nie znamy,
-        // rzucamy błąd zamiast go ignorować (rygorystyczna walidacja kontraktu).
         this.objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
     }
 
@@ -38,10 +35,8 @@ public class JsonParser {
             throw new IOException("Input file not found at: " + filePath);
         }
 
-        // Deserializacja z automatyczną obsługą polimorfizmu (AddVehicle vs Step)
         InputDTO input = objectMapper.readValue(file, InputDTO.class);
 
-        // Kaskadowa walidacja semantyczna (wywołuje isValid() na każdej komendzie)
         if (input == null || !input.isValid()) {
             throw new IOException("JSON validation failed: Some commands contain invalid data (e.g., wrong road names).");
         }
@@ -56,13 +51,11 @@ public class JsonParser {
     public void streamInput(String filePath, java.util.function.Consumer<com.avsystem.traffic.dto.CommandDTO> handler) throws IOException {
         com.fasterxml.jackson.core.JsonParser parser = objectMapper.getFactory().createParser(new File(filePath));
 
-        // Przeskakujemy do tablicy "commands"
         while (parser.nextToken() != com.fasterxml.jackson.core.JsonToken.END_OBJECT) {
             String fieldName = parser.getCurrentName();
             if ("commands".equals(fieldName)) {
-                parser.nextToken(); // start array [
+                parser.nextToken();
 
-                // Czytamy obiekty jeden po drugim
                 while (parser.nextToken() != com.fasterxml.jackson.core.JsonToken.END_ARRAY) {
                     com.avsystem.traffic.dto.CommandDTO cmd = objectMapper.readValue(parser, com.avsystem.traffic.dto.CommandDTO.class);
                     if (cmd.isValid()) {
@@ -74,14 +67,11 @@ public class JsonParser {
         parser.close();
     }
 
-    // --- LOGIKA "NEXT-GEN" ---
 
     /**
      * Dynamicznie dobiera typ komendy na podstawie pola "type" w JSON.
      * Jackson robi to automatycznie dzięki adnotacjom @JsonTypeInfo w DTO.
      */
     private void setupPolymorphicDeserialization() {
-        // Ten mechanizm pozwala na dodawanie nowych komend bez edytowania parsera.
-        // Rozwiązanie zgodne z zasadą Open-Closed (S.O.L.I.D.)
     }
 }

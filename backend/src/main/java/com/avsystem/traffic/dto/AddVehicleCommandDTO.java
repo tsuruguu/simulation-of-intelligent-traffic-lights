@@ -30,19 +30,16 @@ public class AddVehicleCommandDTO extends CommandDTO {
      */
     @Override
     public boolean isValid() {
-        // 1. Walidacja ID pojazdu
         if (vehicleId == null || vehicleId.trim().isEmpty()) {
             this.validationErrorMessage = "vehicleId cannot be null or empty";
             return false;
         }
 
-        // 2. Sprawdzenie, czy pola kierunków nie są puste
         if (startRoad == null || endRoad == null) {
             this.validationErrorMessage = "Road directions (startRoad/endRoad) must be provided";
             return false;
         }
 
-        // 3. Walidacja poprawności nazw kierunków (Case-insensitive)
         if (!isValidDirection(startRoad)) {
             this.validationErrorMessage = "Invalid startRoad: '" + startRoad + "'. Valid directions: " + Arrays.toString(Direction.values());
             return false;
@@ -68,7 +65,6 @@ public class AddVehicleCommandDTO extends CommandDTO {
         }
     }
 
-    // --- Gettery ---
 
     public String getVehicleId() {
         return vehicleId;
@@ -93,6 +89,6 @@ public class AddVehicleCommandDTO extends CommandDTO {
     @SuppressWarnings("unchecked")
     public <T> T execute(com.avsystem.traffic.core.SimulationEngine engine) {
         engine.handleAddVehicle(this);
-        return null; // Dodawanie pojazdu nie zwraca statusu kroku
+        return null;
     }
 }

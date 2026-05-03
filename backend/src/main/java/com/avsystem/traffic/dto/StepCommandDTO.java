@@ -34,7 +34,6 @@ public class StepCommandDTO extends CommandDTO {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T execute(SimulationEngine engine) {
-        // Wykonujemy krok i zwracamy status (wymaga, by engine.handleStep() zwracał StepStatusDTO)
         return (T) engine.handleStep();
     }
 }

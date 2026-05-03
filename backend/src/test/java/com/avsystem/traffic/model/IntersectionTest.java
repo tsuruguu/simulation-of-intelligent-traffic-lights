@@ -12,14 +12,11 @@ class IntersectionTest {
         TrafficLight north = intersection.getTrafficLight(Direction.NORTH);
         TrafficLight east = intersection.getTrafficLight(Direction.EAST);
 
-        // 1. "Odczekaj", aż czerwone światło pozwoli na zmianę (MIN_RED_DURATION = 3)
         for(int i = 0; i < 4; i++) intersection.getAllTrafficLights().values().forEach(TrafficLight::incrementTime);
 
-        // 2. Teraz przejście na GREEN zadziała
         north.transitionTo(LightState.GREEN);
         east.transitionTo(LightState.GREEN);
 
-        // 3. Inkrymentuj czas, aby stan GREEN został w pełni uznany
         intersection.getAllTrafficLights().values().forEach(TrafficLight::incrementTime);
 
         assertFalse(intersection.isStateSafe(), "Wykryto konflikt N i E!");
@@ -30,7 +27,6 @@ class IntersectionTest {
     void testExtremeSafetyViolation() {
         Intersection intersection = new Intersection();
 
-        // Odczekaj na odblokowanie RED -> GREEN
         for(int i = 0; i < 4; i++) intersection.getAllTrafficLights().values().forEach(TrafficLight::incrementTime);
 
         intersection.getTrafficLight(Direction.NORTH).transitionTo(LightState.GREEN);

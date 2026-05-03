@@ -25,11 +25,6 @@ public interface TrafficStrategy {
      */
     String getStrategyName();
 
-    /* * Pro-Tip dla poziomu Expert:
-     * W tym miejscu można dodać metodę init(), która pozwoliłaby sieci neuronowej
-     * na wczytanie wag modelu z pliku binarnego przed rozpoczęciem symulacji.
-     */
     default void init() {
-        // Opcjonalna inicjalizacja (np. ładowanie modelu ML)
     }
 }
