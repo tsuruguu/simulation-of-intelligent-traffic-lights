@@ -1,22 +1,4 @@
-# Getting Started
-
-To run the application with full backend connectivity, follow these steps:
-
-1.  **Start the Bridge Server**:
-    Navigate to the `frontend` directory and run:
-    ```bash
-    node bridge.js
-    ```
-2.  **Start the UI**:
-    In a second terminal, within the `frontend` directory, run:
-    ```bash
-    npm run dev
-    ```
-3.  **Access the Dashboard**:
-    Open [http://localhost:5173](http://localhost:5173) in your browser.
----
-
-# Smart Traffic UI - Documentation
+# Smart Traffic UI
 
 This frontend application is an interactive dashboard built to visualize the **Intelligent Traffic Light Simulation**. It serves as the graphical user interface for designing traffic scenarios, interacting with the Java-based simulation engine, and analyzing results through real-time animations.
 
@@ -58,3 +40,21 @@ The application supports the full lifecycle of a simulation:
 *   **Save/Load Input**: Export your scenario as an `input.json` or load an existing one.
 *   **Save/Load Output**: Export the calculated results as an `output.json` for later analysis or re-watch a previous simulation without re-running the backend.
 
+---
+
+# Getting Started
+
+To run the application with full backend connectivity, follow these steps:
+
+1.  **Start the Bridge Server**:
+    Navigate to the `frontend` directory and run:
+    ```bash
+    node bridge.js
+    ```
+2.  **Start the UI**:
+    In a second terminal, within the `frontend` directory, run:
+    ```bash
+    npm run dev
+    ```
+3.  **Access the Dashboard**:
+    Open [http://localhost:5173](http://localhost:5173) in your browser.

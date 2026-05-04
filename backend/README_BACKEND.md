@@ -1,9 +1,9 @@
-## 🛠 Prerequisites
+## Prerequisites
 * **Java Development Kit (JDK) 21** or higher.
 * **Apache Maven 3.9+**.
 * (Optional) An IDE such as IntelliJ IDEA or VS Code with Java extensions.
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 .
@@ -74,9 +74,9 @@ Road congestion and average wait times are calculated in constant time using agg
 
 ---
 
-## 🏗️ Detailed Module Descriptions
+## Detailed Module Descriptions
 
-## 🧠 1. Brain Package (`com.avsystem.traffic.brain`)
+## 1. Brain Package (`com.avsystem.traffic.brain`)
 
 This package contains the "intelligence" of the simulation. It follows the Strategy Pattern to allow dynamic switching between different control algorithms.
 
@@ -98,7 +98,7 @@ A decorator/wrapper strategy. It monitors the primary AI's decisions and overrid
 
 ---
 
-## ⚙️ 2. Core Package (`com.avsystem.traffic.core`)
+## 2. Core Package (`com.avsystem.traffic.core`)
 
 The backbone of the simulation execution.
 
@@ -112,7 +112,7 @@ Handles the physics of each simulation step. It manages vehicle movement, update
 
 ---
 
-## 📦 3. DTO Package (`com.avsystem.traffic.dto`)
+## 3. DTO Package (`com.avsystem.traffic.dto`)
 
 Data Transfer Objects that define the JSON communication contract.
 
@@ -142,7 +142,7 @@ Represents the outcome of a single step, listing all vehicles that successfully 
 
 ---
 
-## 💾 4. IO Package (`com.avsystem.traffic.io`)
+## 4. IO Package (`com.avsystem.traffic.io`)
 
 Hardware/File system abstraction layer.
 
@@ -156,7 +156,7 @@ Responsible for generating the final JSON report. Features asynchronous writing 
 
 ---
 
-## 🚦 5. Model Package (`com.avsystem.traffic.model`)
+## 5. Model Package (`com.avsystem.traffic.model`)
 
 The physical representation of the domain.
 
@@ -214,7 +214,7 @@ Real-time calculation of vehicle density and congestion on each road approach. T
 
 ---
 
-## 🛠️ Resources & Configuration
+## Resources & Configuration
 
 ### `logging.properties`
 
@@ -225,7 +225,7 @@ Configuration for `java.util.logging`. Defines a professional log format and sev
 Pre-trained weights and biases for the `NeuralNetworkStrategy`. This allows the AI to be updated without modifying the source code.
 
 ---
-## 📄 JSON Interface
+## JSON Interface
 
 ### Input Example (`input.json`)
 ```json
@@ -251,7 +251,7 @@ Pre-trained weights and biases for the `NeuralNetworkStrategy`. This allows the 
 
 ---
 
-## 🧪 Testing Suite
+## Testing Suite
 
 ### `IntersectionTest.java`
 
@@ -267,7 +267,7 @@ Rigorous testing of the modular math used to determine vehicle directionality ac
 
 ---
 
-## 🚀 Execution & Build
+## Execution & Build
 
 ### Build
 
@@ -276,14 +276,6 @@ mvn clean package
 ```
 
 Generates an Uber-JAR in the `/target` directory.
-
-### Test
-
-```bash
-mvn test
-```
-
-Runs all unit tests.
 
 ### Run
 
