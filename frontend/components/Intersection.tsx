@@ -11,27 +11,23 @@ interface IntersectionProps {
 export const Intersection: React.FC<IntersectionProps> = ({ lights, waitingVehicles, crossingVehicles }) => {
     return (
         <div className="relative w-[600px] h-[600px] bg-[#1a1a1a] rounded-3xl border-8 border-[#333] shadow-2xl overflow-hidden">
-            {/* TŁO SKRZYŻOWANIA */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="absolute w-[160px] h-full bg-[#222]" />
                 <div className="absolute h-[160px] w-full bg-[#222]" />
                 <div className="absolute w-[160px] h-[160px] bg-[#252525]" />
             </div>
 
-            {/* SYGNALIZATORY */}
             <div className="absolute top-[140px] left-[380px] z-20"><TrafficLight state={lights.NORTH} direction="N" /></div>
             <div className="absolute bottom-[140px] left-[150px] z-20"><TrafficLight state={lights.SOUTH} direction="S" /></div>
             <div className="absolute top-[150px] left-[140px] z-20"><TrafficLight state={lights.WEST} direction="W" horizontal /></div>
             <div className="absolute top-[380px] right-[140px] z-20"><TrafficLight state={lights.EAST} direction="E" horizontal /></div>
 
-            {/* AUTA STOJĄCE (W KOLEJKACH) */}
             {Object.entries(waitingVehicles).map(([dir, ids]) =>
                 ids.map((id, i) => (
                     <Car key={id} id={id} dir={dir as Direction} index={i} type="waiting" />
                 ))
             )}
 
-            {/* AUTA WYJEŻDŻAJĄCE (ANIMOWANE) */}
             {crossingVehicles.map(v => (
                 <LeavingCar key={v.id} vehicle={v} />
             ))}
@@ -53,7 +49,6 @@ const LeavingCar = ({ vehicle }: { vehicle: { id: string, from: Direction, to: D
 
     const style: React.CSSProperties = {
         position: 'absolute',
-        // ZMIANA: Czas trwania animacji zwiększony do 2000ms (2 sekundy)
         transition: 'all 2000ms cubic-bezier(0.4, 0, 0.2, 1)',
         zIndex: 50,
         left: start.left,
@@ -71,7 +66,6 @@ const LeavingCar = ({ vehicle }: { vehicle: { id: string, from: Direction, to: D
     return <div style={style}><CarBox id={vehicle.id} color="bg-white border-2 border-blue-400" /></div>;
 };
 
-// Bazowy klocek auta
 const Car = ({ id, dir, index, type }: { id: string, dir: Direction, index: number, type: 'waiting' | 'leaving' }) => {
     const pos = getPos(dir, index);
     const colorMap = { NORTH: 'bg-blue-500', SOUTH: 'bg-rose-500', WEST: 'bg-amber-500', EAST: 'bg-emerald-500' };
@@ -89,7 +83,6 @@ const CarBox = ({ id, color }: { id: string, color: string }) => (
     </div>
 );
 
-// Koordynaty kolejek
 function getPos(dir: Direction, i: number) {
     const gap = 65;
     const stop = 155;
@@ -101,7 +94,6 @@ function getPos(dir: Direction, i: number) {
     }
 }
 
-// Koordynaty celu (poza ekranem)
 function getExitPos(to: Direction) {
     switch(to) {
         case 'NORTH': return { top: -100, left: 230 };

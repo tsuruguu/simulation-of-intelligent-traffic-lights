@@ -1,7 +1,6 @@
 export type Direction = 'NORTH' | 'EAST' | 'SOUTH' | 'WEST';
 export type LightState = 'RED' | 'YELLOW' | 'GREEN';
 
-// --- KOMENDY (WEJŚCIE DO BACKENDU) ---
 
 /**
  * Bazowy interfejs dla komend przesyłanych do symulacji.
@@ -49,7 +48,6 @@ export interface SimulationInput {
 }
 
 
-// --- STATUSY (WYJŚCIE Z BACKENDU) ---
 
 /**
  * Reprezentuje status pojedynczego kroku symulacji (StepStatusDTO)[cite: 5, 6].
@@ -66,7 +64,6 @@ export interface SimulationResult {
 }
 
 
-// --- TYPY POMOCNICZE UI ---
 
 export interface IntersectionState {
     lights: Record<Direction, LightState>;

@@ -13,16 +13,13 @@ app.post('/run-simulation', (req, res) => {
     const outputPath = path.join(process.cwd(), 'public/output_temp.json');
     const jarPath = path.join(process.cwd(), '../backend/target/traffic-simulation-backend-1.0-SNAPSHOT.jar');
 
-    // 1. Zapisujemy to, co przyszło z UI do pliku
     fs.writeFileSync(inputPath, JSON.stringify(req.body, null, 2));
 
-    // 2. Wykonujemy backend Javy dokładnie tak, jak w zadaniu[cite: 1, 3]
     exec(`java -jar ${jarPath} ${inputPath} ${outputPath}`, (error) => {
         if (error) {
             return res.status(500).json({ error: "Błąd backendu Javy: " + error.message });
         }
 
-        // 3. Odczytujemy wynik i wysyłamy prosto do UI
         const resultData = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
         res.json(resultData);
     });

@@ -12,5 +12,4 @@ function App() {
     );
 }
 
-// Kluczowa linia, która naprawia błąd "is not a module"
 export default App;

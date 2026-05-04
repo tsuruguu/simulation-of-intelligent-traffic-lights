@@ -5,7 +5,6 @@ import { SimulationResult, Direction, LightState, Command } from '../types/simul
 import { Play, Pause, SkipForward, RefreshCcw, Activity, Car, Download, ScrollText, BarChart3 } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-    // --- STAN SYMULACJI (DANE) ---
     const [commands, setCommands] = useState<Command[]>([]);
     const [data, setData] = useState<SimulationResult | null>(null);
     const [currentStep, setCurrentStep] = useState(0);
@@ -13,18 +12,14 @@ export const Dashboard: React.FC = () => {
     const [speed, setSpeed] = useState(800);
     const [eventLog, setEventLog] = useState<string[]>(["System gotowy. Wygeneruj scenariusz lub wgraj dane."]);
 
-    // MAPA TRAS: Przechowuje informację skąd-dokąd jedzie każde auto (niezbędne do animacji skręcania)
     const [vehicleRoutes, setVehicleRoutes] = useState<Record<string, { from: Direction, to: Direction }>>({});
 
-    // --- STAN WIZUALNY (UI) ---
     const [waitingVehicles, setWaitingVehicles] = useState<Record<Direction, string[]>>({
         NORTH: [], EAST: [], SOUTH: [], WEST: []
     });
 
-    // Auta aktualnie wykonujące animację przejazdu przez środek
     const [crossingVehicles, setCrossingVehicles] = useState<{ id: string, from: Direction, to: Direction }[]>([]);
 
-    // 1. Harmonogram przyjazdów (wyliczany z komend addVehicle)
     const arrivalSchedule = useMemo(() => {
         const schedule: Record<number, { id: string, from: Direction }[]> = {};
         let stepCounter = 0;
@@ -44,32 +39,26 @@ export const Dashboard: React.FC = () => {
 
         const stepStatus = data.stepStatuses[currentStep];
 
-        // 1. Zidentyfikuj auta, które właśnie wyjeżdżają
         const newLeftIds = stepStatus.leftVehicles;
         const newLeaving = newLeftIds
             .map(id => ({ id, ...vehicleRoutes[id] }))
             .filter(v => v.from && v.to);
 
         if (newLeaving.length > 0) {
-            // Dodaj nowe auta do animacji (nie czyść poprzednich!)
             setCrossingVehicles(prev => [...prev, ...newLeaving]);
 
-            // Usuń konkretnie TE auta z listy animacji po 1100ms
             setTimeout(() => {
                 setCrossingVehicles(prev => prev.filter(v => !newLeftIds.includes(v.id)));
             }, 2100);
         }
 
-        // 2. Zaktualizuj kolejki (waitingVehicles)
         setWaitingVehicles(prev => {
             const next = { ...prev };
-            // Dodawanie nowych aut
             if (arrivalSchedule[currentStep]) {
                 arrivalSchedule[currentStep].forEach(v => {
                     if (!next[v.from].includes(v.id)) next[v.from] = [...next[v.from], v.id];
                 });
             }
-            // Usuwanie wyjeżdżających
             newLeftIds.forEach(id => {
                 (Object.keys(next) as Direction[]).forEach(d => {
                     next[d] = next[d].filter(vId => vId !== id);
@@ -81,7 +70,6 @@ export const Dashboard: React.FC = () => {
         setCurrentStep(prev => prev + 1);
     }, [data, currentStep, arrivalSchedule, vehicleRoutes]);
 
-    // 3. Timer automatycznego odtwarzania
     useEffect(() => {
         let timer: number;
         if (isPlaying) {
@@ -100,7 +88,6 @@ export const Dashboard: React.FC = () => {
         const currentLeft = data.stepStatuses[currentStep]?.leftVehicles || [];
         const nextLeft = data.stepStatuses[currentStep + 1]?.leftVehicles || [];
 
-        // Funkcja sprawdzająca, czy z danej osi (np. N-S) wyjeżdżają auta
         const isMoving = (dirs: Direction[], ids: string[]) =>
             ids.some(id => dirs.includes(vehicleRoutes[id]?.from));
 
@@ -112,12 +99,10 @@ export const Dashboard: React.FC = () => {
 
         const lights = { ...defaultLights };
 
-        // Logika dla osi pionowej (N-S)
         if (verticalMovingNow) {
             lights.NORTH = lights.SOUTH = verticalMovingNext ? 'GREEN' : 'YELLOW';
         }
 
-        // Logika dla osi poziomej (E-W)
         if (horizontalMovingNow) {
             lights.EAST = lights.WEST = horizontalMovingNext ? 'GREEN' : 'YELLOW';
         }
@@ -125,7 +110,6 @@ export const Dashboard: React.FC = () => {
         return lights;
     };
 
-    // --- LOGIKA GENERATORA ---
     const getRandomRoute = () => {
         const dirs: Direction[] = ['NORTH', 'SOUTH', 'EAST', 'WEST'];
         const start = dirs[Math.floor(Math.random() * 4)];
@@ -160,7 +144,6 @@ export const Dashboard: React.FC = () => {
         setEventLog(prev => [`[PLANNER] Dodano pojazd uprzywilejowany: ${id}`, ...prev]);
     };
 
-// 1. Eksport scenariusza wejściowego (komendy)
     const exportInputJson = () => {
         const blob = new Blob([JSON.stringify({ commands }, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -170,7 +153,6 @@ export const Dashboard: React.FC = () => {
         a.click();
     };
 
-// 2. Eksport wyniku symulacji (output z backendu)
     const exportOutputJson = () => {
         if (!data) return;
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -189,13 +171,11 @@ export const Dashboard: React.FC = () => {
             try {
                 const json = JSON.parse(e.target?.result as string);
 
-                // Reset wizualny skrzyżowania
                 setCurrentStep(0);
                 setWaitingVehicles({ NORTH: [], EAST: [], SOUTH: [], WEST: [] });
                 setCrossingVehicles([]);
                 setIsPlaying(false);
 
-                // Jeśli plik to INPUT (ma klucz "commands")[cite: 11]
                 if (json.commands) {
                     setCommands(json.commands);
                     const newRoutes: Record<string, { from: Direction, to: Direction }> = {};
@@ -208,7 +188,6 @@ export const Dashboard: React.FC = () => {
                     setData(null);
                     setEventLog(prev => ["📂 Wczytano INPUT. Kliknij 'URUCHOM', aby obliczyć.", ...prev]);
                 }
-                // Jeśli plik to OUTPUT (ma klucz "stepStatuses")[cite: 11]
                 else if (json.stepStatuses) {
                     setData(json);
                     setEventLog(prev => ["📂 Wczytano OUTPUT. Można odtwarzać animację.", ...prev]);
@@ -244,7 +223,6 @@ export const Dashboard: React.FC = () => {
 
     return (
         <div className="min-h-screen p-8 flex flex-col items-center gap-6 bg-[#0f0f12] text-white">
-            {/* 1. NAGŁÓWEK I STATYSTYKI */}
             <div className="w-full max-w-6xl grid grid-cols-4 gap-4">
                 <div className="col-span-2 bg-traffic-gray p-6 rounded-2xl border border-neutral-700">
                     <h1 className="text-xl font-bold flex items-center gap-2"><Activity className="text-blue-500" /> Smart Traffic Analyzer</h1>
@@ -263,9 +241,7 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <div className="w-full max-w-6xl grid grid-cols-12 gap-6">
-                {/* 2. LEWY PANEL (KONTROLA I DANE) */}
                 <div className="col-span-3 flex flex-col gap-4">
-                    {/* Generator ruchu */}
                     <div className="bg-traffic-gray p-4 rounded-xl border border-neutral-700">
                         <h3 className="text-xs font-bold text-blue-400 uppercase mb-3 flex justify-between">
                             <span>Generator Ruchu</span>
@@ -281,7 +257,6 @@ export const Dashboard: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Zarządzanie danymi (Import/Export)[cite: 15] */}
                     <div className="bg-traffic-gray p-4 rounded-xl border border-neutral-700">
                         <h3 className="text-xs font-bold text-emerald-400 uppercase mb-3">Zarządzanie danymi</h3>
 
@@ -308,7 +283,6 @@ export const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* 3. CENTRUM: SKRZYŻOWANIE */}
                 <div className="col-span-6 flex flex-col items-center gap-6">
                     {data ? (
                         <Intersection
@@ -324,7 +298,6 @@ export const Dashboard: React.FC = () => {
                         </div>
                     )}
 
-                    {/* PANEL ODTWARZANIA */}
                     <div className="flex items-center gap-6 bg-traffic-gray px-8 py-3 rounded-full border border-neutral-700 shadow-2xl">
                         <button onClick={() => { setCurrentStep(0); setWaitingVehicles({ NORTH: [], EAST: [], SOUTH: [], WEST: [] }); setCrossingVehicles([]); }} className="text-gray-400 hover:text-white transition-colors"><RefreshCcw size={20} /></button>
                         <button onClick={() => setIsPlaying(!isPlaying)} className="w-12 h-12 flex items-center justify-center bg-blue-600 hover:bg-blue-500 rounded-full shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all active:scale-90">
@@ -340,7 +313,6 @@ export const Dashboard: React.FC = () => {
                     </div>
                 </div>
 
-                {/* 4. PRAWO: LIVE EVENT LOG */}
                 <div className="col-span-3 bg-traffic-gray rounded-xl border border-neutral-700 overflow-hidden flex flex-col">
                     <div className="p-3 bg-neutral-800 border-b border-neutral-700 flex items-center gap-2">
                         <ScrollText size={14} className="text-blue-400" />
